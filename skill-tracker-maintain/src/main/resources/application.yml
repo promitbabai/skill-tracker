@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: skill-tracker-maintain
+server:
+  port: 8091
+eureka:
+  client:
+    instance:
+      hostname: localhost
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true

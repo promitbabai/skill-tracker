@@ -1,0 +1,25 @@
+server:
+  port: 8070
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: SKILL-TRACKER-SEARCH
+          uri: lb://SKILL-TRACKER-SEARCH
+          predicates:
+            - Path=/skill-tracker-search/**
+        - id: SKILL-TRACKER-MAINTAIN
+          uri: lb://SKILL-TRACKER-MAINTAIN
+          predicates:
+            - Path=/skill-tracker-maintain/**
+eureka:
+  client:
+    instance:
+      hostname: localhost
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    registerWithEureka: true
+    fetchRegistry: true
