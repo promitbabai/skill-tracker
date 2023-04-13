@@ -10,11 +10,11 @@ spring:
         - id: SKILL-TRACKER-SEARCH
           uri: lb://SKILL-TRACKER-SEARCH
           predicates:
-            - Path=/skill-tracker-search/**
+            - Path=/skill-tracker/api/v1/admin/**
         - id: SKILL-TRACKER-MAINTAIN
           uri: lb://SKILL-TRACKER-MAINTAIN
           predicates:
-            - Path=/skill-tracker-maintain/**
+            - Path=/skill-tracker/api/v1/engineer/**
 eureka:
   client:
     instance:

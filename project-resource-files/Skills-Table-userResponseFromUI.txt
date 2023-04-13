@@ -1,0 +1,59 @@
+"techskills": [
+    {
+      "skillid": "T001",
+      "skillname": "html-css-javascript"
+    },
+    {
+      "skillid": "T002",
+      "skillname": "angular",
+      "rating": "18"
+    },
+    {
+      "skillid": "T003",
+      "skillname": "react",
+      "rating": "12"
+    },
+    {
+      "skillid": "T004",
+      "skillname": "spring",
+      "rating": "18"
+    },
+    {
+      "skillname": "restful",
+      "rating": "12"
+    },
+    {
+      "skillname": "hibernae",
+      "rating": "15"
+    },
+    {
+      "skillname": "git",
+      "rating": "12"
+    },
+    {
+      "skillname": "docker",
+      "rating": "18"
+    },
+    {
+      "skillname": "jenkins",
+      "rating": "12"
+    },
+    {
+      "skillname": "aws",
+      "rating": "18"
+    }
+	],
+	"nontechskills": [
+    {
+      "skillname": "spoken",
+      "rating": "15"
+    },
+    {
+      "skillname": "communication",
+      "rating": "19"
+    },
+    {
+      "skillname": "aptitude",
+      "rating": "18"
+    }
+  ]
