@@ -79,7 +79,7 @@ springdoc:
 
 logging:
   level:
-    root: ERROR
+    root: INFO
   pattern:
     console: "%d %-5level %logger : %msg%n"
     file: "%d %-5level [%thread] %logger : %msg%n"

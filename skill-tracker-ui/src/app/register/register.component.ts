@@ -12,12 +12,14 @@ import { RegisterRequestModel } from './model/registerRequestModel';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  successMessage: boolean;
+  successFlag: boolean;
   registrationForm:FormGroup;
   registerRequestModel: RegisterRequestModel;
   insertData: Subscription;
   allSkills: Subscription;
   registrationInitialized: boolean;
+  registrationSuccessID = 'User saved successfully with ID = ';
+  secondMsg = "Please proceed by cicking the below Next Button";
   
   techskillsToAdd : {skillId: string, topic: string, rating:string}[] = [];
   nontechskillsToAdd : {skillId: string, topic: string, rating:string}[] = [];
@@ -50,16 +52,16 @@ export class RegisterComponent implements OnInit {
    */
   initializeForm(){
     this.registrationForm=this.formBuilder.group({
-      // associateid:['',[Validators.required,Validators.pattern("^CTS[0-9]{5,30}$")]],
-      // name:['',[Validators.required,Validators.pattern("(^[A-Za-z]{3,16})([ ]{0,1})([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})")]],
-      // mobile:['',[Validators.required,Validators.min(1000000000),Validators.max(9999999999)]],
-      // email:['',[Validators.required,Validators.email]],
-      // password:['',[Validators.required,Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{7,}")]],
-      associateid:[''],
-      name:[''],
-      mobile:[''],
-      email:[''],
-      password:[''],
+      associateid:['',[Validators.required,Validators.pattern("^CTS[0-9]{5,30}$")]],
+      name:['',[Validators.required,Validators.pattern("(^[A-Za-z]{3,16})([ ]{0,1})([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})")]],
+      mobile:['',[Validators.required,Validators.min(1000000000),Validators.max(9999999999)]],
+      email:['',[Validators.required,Validators.email]],
+      password:['',[Validators.required,Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-_$@$!%*?&])[A-Za-z\d$@$!%*?&].{7,}")]],
+      // associateid:[''],
+      // name:[''],
+      // mobile:[''],
+      // email:[''],
+      // password:[''],
       techskills: this.formBuilder.array([]),
       nontechskills: this.formBuilder.array([]),
     });
@@ -148,10 +150,12 @@ export class RegisterComponent implements OnInit {
    * inserts a new user into the database
    */
   sharedServiceCall(){
-    this.insertData = this.sharedService.registerUserDetails(this.registerRequestModel).subscribe((success: any) => {
-      console.log('Insert Executed');
-      this.successMessage = true;
-      this.router.navigateByUrl('/login');
+    this.insertData = this.sharedService.registerUserDetails(this.registerRequestModel).subscribe((response: any) => {
+      console.log('Success Message');
+      console.log(response);
+      this.successFlag = true;
+      this.registrationSuccessID = this.registrationSuccessID + response;
+            
     },
     (httpErrorResponse: HttpErrorResponse) => {
       // this.loginError = true;
@@ -176,4 +180,8 @@ export class RegisterComponent implements OnInit {
     this.allSkills ? this.allSkills.unsubscribe(): null;
   }
 
+
+  nextButtonAction(){
+    this.router.navigateByUrl('/login');
+  }
 }

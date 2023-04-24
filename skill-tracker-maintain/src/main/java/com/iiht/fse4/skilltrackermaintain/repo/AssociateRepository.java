@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AssociateRepository extends JpaRepository<Associate, String> {
 
-    public Associate findByAssociateid (final String associateId);
+    public Associate findByUsername (final String associateId);
+
+
 
 
 

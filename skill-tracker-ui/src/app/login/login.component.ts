@@ -1,10 +1,11 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SharedService } from 'src/app/shared-service/shared.service';
 import { LoginModel } from './model/loginModel';
+import { AuthenticationRequest } from './model/authenticationRequest';
 
 @Component({
   selector: 'app-login',
@@ -15,30 +16,31 @@ export class LoginComponent implements OnInit {
   loginSuccess: boolean;
   loginForm:FormGroup;
   loginModel: LoginModel;
+  authRequest: AuthenticationRequest;
   loginData: Subscription;
   allSkills: Subscription;
   loginError: boolean;
-  loginErrorMessage: '';
+  loginErrorMessage: any;
 
-  constructor(
-    private formBuilder:FormBuilder,
-    private http:HttpClient,
-    private router:Router,
-    private sharedService:SharedService
-    ){
+  constructor(private formBuilder:FormBuilder, private http:HttpClient, 
+          private router:Router, private sharedService:SharedService){
+
       this.loginModel = new LoginModel();
+      this.authRequest = new AuthenticationRequest();
     }
+
+
   ngOnInit(): void {
-
     this.initializeForm();
-
   }
+
+
   initializeForm(){
     this.loginForm=this.formBuilder.group({
-      associateID:['',[Validators.required,Validators.pattern("^CTS[0-9]{5,30}$")]],
-      associatePassword:['',[Validators.required,Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{7,}")]],
-      // associateID:[''],
-      // associatePassword:[''],
+      //associateID:['',[Validators.required,Validators.pattern("^CTS[0-9]{5,30}$")]],
+      //associatePassword:['',[Validators.required,Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[-_$@$!%*?&])[A-Za-z\d$@$!%*?&].{7,}")]],
+      associateID:[''],
+      associatePassword:[''],
     });
   }
 
@@ -48,10 +50,9 @@ export class LoginComponent implements OnInit {
  
 
   loginButtonAction(){
-
+    console.log("Login Component -  loginButtonAction");
     this.populateRestApiCallInParams();
-    this.validateUserServiceCall();
-
+    this.authenticateUserAndRetrieveTokenServiceCall();
   }
 
  /**
@@ -60,47 +61,50 @@ export class LoginComponent implements OnInit {
    */
  populateRestApiCallInParams(){
   this.loginModel = this.loginForm.value;
-
   // base64 password encryption
   this.loginModel.associatePassword = btoa(this.loginModel.associatePassword);
-  console.log("Encrypted Password is " +this.loginModel.associatePassword);
+
+  //populate into the AuthenticationRequest object so that it can be sent to the Authentication Server
+  this.authRequest.username = this.loginModel.associateID;
+  this.authRequest.password = this.loginModel.associatePassword;
+  this.authRequest.token = "";
+  console.log("Login Component -  populateRestApiCallInParams");
+  console.log("Encrypted Password is " + this.loginModel.associatePassword);
 }
 
-/**
- * Method to call Shared Service function that
- * finds the user into the database
- */
-validateUserServiceCall(){
-  this.loginData = this.sharedService.validateUserCredentialss(this.loginModel.associateID, this.loginModel.associatePassword).subscribe((success: any) => {
-    const obtainedProfile = success;
-    console.log(obtainedProfile);
-    console.log(obtainedProfile.admin);
-    this.loginError = false;
-    this.loginErrorMessage = '';
-    this.loginSuccess = true;
-    // console.log('Login Executed');
-    // console.log(associateDataObtained);
 
-    //To transfer data between ifferent Angular components (Login ==> User)
-    //we are using Behaviour Subject
-    this.sharedService.populateLoggedInAssociateData(obtainedProfile);
-    if(obtainedProfile.admin === 'N'){
-      this.router.navigateByUrl('/user');
-    }else{
-      // this.router.navigateByUrl('/user');
-      this.router.navigateByUrl('/admin');
-    }
-    
+/**
+ * Method to call Shared Service function that authenticates the user from the database
+ */
+authenticateUserAndRetrieveTokenServiceCall(){
+  console.log("Login Component -  validateUserServiceCall");
+  this.loginErrorMessage = "";
+  this.loginData = this.sharedService.authenticateUserCredentials(this.authRequest).subscribe((data: any) => {
+  this.authRequest.token = data;
+  // console.log("JWT OKEN = " + jwtToken); 
+  //To transfer data between different Angular components (Login ==> User) we are using Behaviour Subject
+  this.sharedService.populateLoggedInAssociateToken(this.authRequest);
+  this.router.navigateByUrl('/user'); 
+
+    // this.getUserDetailsRestCallWithToken(jwtToken);
   },
   (httpErrorResponse: HttpErrorResponse) => {
     this.loginError = true;
     console.log('Login Error');
     console.log(httpErrorResponse.error);
-    this.loginErrorMessage = httpErrorResponse.error;
+    if(null == httpErrorResponse.error){
+      this.loginErrorMessage = 'Invalid Username';
+    }else{
+      this.loginErrorMessage = httpErrorResponse.error;
+    }
+    
     this.loginSuccess = false;
   },
   () => {}
   );
 }
+
+
+
 
 }

@@ -1,3 +1,3 @@
-# skill-tracker
+# FSE4-SkillTracker
 
-        Frontend - ApiGateway - Eureka Server - Backend Microservices - 
+FSE4 Microservices project

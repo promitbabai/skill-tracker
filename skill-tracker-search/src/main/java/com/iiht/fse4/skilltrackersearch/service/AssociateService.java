@@ -245,7 +245,7 @@ public class AssociateService {
      */
     public void saveProfileFromCQRS(final KafkaMessage kafkaMessage){
         Associate associate = performModelTransformation(kafkaMessage.getProfile());
-        if(kafkaMessage.getMongoOpsCode().equals("INSERT")){
+        if(kafkaMessage.getMongoOpsCode().equals("INSERT") || kafkaMessage.getMongoOpsCode().equals("UPDATE")){
             try{
                 repo.save(associate);
                 log.info("AssociateRepository - SAVE from KAKFA to MongoDB");

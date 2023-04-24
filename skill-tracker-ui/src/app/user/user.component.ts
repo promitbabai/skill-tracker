@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,9 +16,11 @@ export class UserComponent implements OnInit {
   updateProfileRequestModel: UpdateProfileRequestModel;
   allSkills: Subscription;
 
-  //Behaviour Subject - populated by Service from Login Component
-  associateData: Subscription;
+  //Behaviour Subject (Login ==> User) - populated by Service from Login Component
+  jwtTokenSubscription: Subscription;
+  authRequest: any;
 
+  profileDataSubscription: Subscription;
   profileData: any;
   ratingsData: Subscription;
   obtainedRatingsData: any;
@@ -40,7 +42,8 @@ export class UserComponent implements OnInit {
   ngOnInit():void{
 
     this.initializeForm();
-    this.obtainAssociateData();
+    this.obtainAssociateToken();
+    
   }
 
   initializeForm(){
@@ -55,24 +58,57 @@ export class UserComponent implements OnInit {
   }
 
    /**
-   * Method to obtain Profile data from shared service
+   * Method to obtain JWT Token data from shared service (Behaviour Subject Login==> User)
+   * Then in the COMPLETE Callback block invoke the getUserCall
    */
-  obtainAssociateData(){
-    this.profileData = null;
-
-    this.associateData = this.sharedService.associateData$.subscribe((success: any) => {
-      this.profileData = success;
-      console.log("################## obtainedProfileData");
-      console.log(this.profileData);
-      this.bindFormData();
+  obtainAssociateToken(){
+    this.authRequest = null;
+    this.jwtTokenSubscription = this.sharedService.loggedInToken$.subscribe((data: any) => {
+      this.authRequest = data;
+      console.log("################## obtained Token from Login Component");
+      console.log(this.authRequest.token);
+      this.getUserDetailsRestCallWithToken(this.authRequest);
+      //this.bindFormData();
     },
     (error: any) => {
       console.log('Errors are there '+error);
     },
-    () => {}
+    () => {
+      
+    }
     );
 
   }
+
+
+  public getUserDetailsRestCallWithToken(authRequest : any) {
+       //this.sharedService.getUserDetailsWithToken(authRequest);
+
+    this.profileDataSubscription = this.sharedService.getUserDetailsWithToken(authRequest).subscribe((response: any) => {
+      this.profileData = response;
+      console.log(this.profileData);
+      if(this.profileData.role === 'ADMIN'){
+        this.router.navigateByUrl('/admin');
+      }else{
+        this.bindFormData();       
+      }
+    },
+    (httpErrorResponse: HttpErrorResponse) => {
+      // this.loginError = true;
+      console.log('Login Error');
+      console.log(httpErrorResponse.error);
+      //this.loginErrorMessage = httpErrorResponse.error;
+      //this.loginSuccess = false;
+    },
+    () => {}
+    ); 
+  }
+  
+  
+  
+
+
+
 
 
    /**
@@ -137,7 +173,7 @@ export class UserComponent implements OnInit {
    */
   populateRestApiCallInParams(){
     this.updateProfileRequestModel = this.updateProfileForm.value;
-    this.updateProfileRequestModel.lastupdated = this.profileData.lastupdated;
+   // this.updateProfileRequestModel.lastupdated = this.profileData.lastupdated;
 
     this.updateProfileRequestModel.techskills = [];
     this.updateProfileRequestModel.nontechskills = [];
@@ -176,7 +212,7 @@ export class UserComponent implements OnInit {
 
   ngOnDestroy(){
 
-    this.associateData ? this.associateData.unsubscribe(): null;
+    this.jwtTokenSubscription ? this.jwtTokenSubscription.unsubscribe(): null;
     this.allSkills ? this.allSkills.unsubscribe(): null;
     this.ratingsData ? this.ratingsData.unsubscribe(): null;
     this.updateData ? this.updateData.unsubscribe(): null;

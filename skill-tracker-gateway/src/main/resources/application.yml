@@ -7,6 +7,10 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: SKILL-TRACKER-AUTH
+          uri: lb://SKILL-TRACKER-AUTH
+          predicates:
+            - Path=/skill-tracker/api/v1/auth/**
         - id: SKILL-TRACKER-SEARCH
           uri: lb://SKILL-TRACKER-SEARCH
           predicates:
@@ -15,6 +19,9 @@ spring:
           uri: lb://SKILL-TRACKER-MAINTAIN
           predicates:
             - Path=/skill-tracker/api/v1/engineer/**
+
+
+
 eureka:
   client:
     instance:

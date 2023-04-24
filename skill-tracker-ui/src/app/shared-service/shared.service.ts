@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
@@ -7,37 +7,76 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 })
 export class SharedService {
 
-  associateData$: Observable<any>;
-  private loggedInAssociateData = new BehaviorSubject<any>(1);
+   //To transfer data between different Angular components (Login ==> User) we are using Behaviour Subject
+  loggedInToken$: Observable<any>;
+  private loggedInAssociateToken = new BehaviorSubject<any>(1);
 
-  constructor(
-    private http: HttpClient,
-  ) {
-    this.associateData$ = this.loggedInAssociateData.asObservable();
+  options  = {
+    headers: new HttpHeaders({
+      'Accept': 'text/html, application/xhtml+xml, */*',
+      'Content-Type': 'application/json; charset=utf-8'
+    }),
+    responseType: 'text' as 'text'
+  };
+
+  
+  constructor(private http: HttpClient) {
+    this.loggedInToken$ = this.loggedInAssociateToken.asObservable();
    }
 
-   populateLoggedInAssociateData(data: any){
-    this.loggedInAssociateData.next(data);
+
+  //  Behaviour Subject (Login ==> User). This is a method invoked by the Angular Framework
+  //  when the Behaviour subject variable is populated inside in the sender LOGIN component
+   populateLoggedInAssociateToken(authRequestData: any){
+    this.loggedInAssociateToken.next(authRequestData);
    }
 
   registerUserDetails(registerRequestModel: any): Observable<any>{
     // console.log('Shared service printing input')
     // console.log(registerRequestModel);
     // return registerRequestModel;
-    return this.http.post("http://localhost:8091/skill-tracker/api/v1/engineer/add-profile",registerRequestModel);
+    return this.http.post("http://localhost:8091/skill-tracker/api/v1/engineer/add-profile",registerRequestModel, this.options);
   }
   
   getAllSkills(): Observable<any>{
     return this.http.get("http://localhost:8091/skill-tracker/api/v1/engineer/getAllSkills");
   }
 
-  validateUserCredentialss(associateID: any, associatePassword: any): Observable<any>{
-    // console.log('Shared service printing input')
-    // console.log(associateID+" "+associatePassword );
+  authenticateUserCredentials(authRequest: any): Observable<any>{
+    console.log("Login Service -  validateUserCredentials");
+    console.log('Invoking the Auth-Server URL, INPARAMS are shown below');
+    console.log(authRequest);
+    return this.http.post("http://localhost:8097/authenticate",authRequest, this.options);
+  }
+
+
+  getUserDetailsWithToken(authRequest : any){
+
+ 
+    let tokenStr = 'Bearer ' + authRequest.token;
+
+    // const headers = new HttpHeaders().set('Authorization', tokenStr);
     const params = new HttpParams()
-    .set('associateID',associateID)
-    .set('associatePassword',associatePassword);
-    return this.http.get("http://localhost:8091/skill-tracker/api/v1/engineer/validateUserCredentials",{params});
+    .set('associateID', authRequest.username)
+    .set('associatePassword', authRequest.password) 
+
+    // const httpOptions = {
+    //   headers: new HttpHeaders({      
+    //     'Authorization': tokenStr
+    //   })
+    //   ,
+    //   params: new HttpParams()
+    //   .set('associateID', authRequest.username)
+    //   .set('associatePassword', authRequest.password) 
+    //   }
+
+    console.log('Shared service - getUserDetailsWithToken');  
+    
+    return this.http.get("http://localhost:8091/skill-tracker/api/v1/engineer/getUserDetails",{params});
+    
+    // return this.http.get("http://localhost:8091/skill-tracker/api/v1/engineer/getUserDetails",{headers, params});
+    // return this.http.get("http://localhost:8091/skill-tracker/api/v1/engineer/getUserDetails", httpOptions);
+
   }
 
   getAssociateSkillRatings(associateID: any){
@@ -54,7 +93,7 @@ export class SharedService {
 
     console.log('Shared service - updateAssociateSkills - (CHANGED FROM GET TO POST printing input')
     console.log(updateProfileRequestModel );
-    return this.http.post("http://localhost:8091/skill-tracker/api/v1/engineer/update-profile",updateProfileRequestModel);
+    return this.http.post("http://localhost:8091/skill-tracker/api/v1/engineer/update-profile",updateProfileRequestModel, this.options);
 
   }
 

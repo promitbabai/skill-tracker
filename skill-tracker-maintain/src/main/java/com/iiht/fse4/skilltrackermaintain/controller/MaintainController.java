@@ -8,6 +8,7 @@ import com.iiht.fse4.skilltrackermaintain.model.Response;
 import com.iiht.fse4.skilltrackermaintain.model.Profile;
 import com.iiht.fse4.skilltrackermaintain.service.AssociateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,9 +74,9 @@ public class MaintainController {
      *
      * @return - Return Value
      */
-    @GetMapping("/validateUserCredentials")
-    public Profile validateUserCredentials(@RequestParam String associateID, @RequestParam String associatePassword){
-        Profile profile = service.validateUserCredentials(associateID,associatePassword);
+    @GetMapping("/getUserDetails")
+    public Profile getUserDetails(@RequestParam String associateID, @RequestParam String associatePassword){
+        Profile profile = service.getUserDetails(associateID,associatePassword);
         return profile;
 
     }
@@ -93,7 +94,8 @@ public class MaintainController {
     @PostMapping("/add-profile")
     public ResponseEntity addProfile (@RequestBody Profile profile){
         Response response = service.addProfile(profile);
-        return ResponseEntity.status(response.getStatus()).body(response.getMessage());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response.getMessage());
+        //return ResponseEntity.status(response.getStatus()).body(response.getMessage());
 
     }
 

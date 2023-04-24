@@ -36,7 +36,7 @@ public class Associate {
     private String id;
 
     @Column
-    private String associateid;
+    private String username;
 
     @Column
     private String name;
@@ -54,12 +54,12 @@ public class Associate {
     private String password;
 
     @Column
-    private String admin;
+    private String role;
 
 
     public String toString()
     {
-        return "\n\n ASSOCIATE DATA\n" + id + " | " + associateid + " | " + name + " | " + mobile + " | " + email + " | "
-                + lastupdated + " | " + password + " | " + admin;
+        return "\n\n ASSOCIATE DATA\n" + id + " | " + username + " | " + name + " | " + mobile + " | " + email + " | "
+                + lastupdated + " | " + password + " | " + role;
     }
 }

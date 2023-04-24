@@ -1,27 +1,24 @@
-<!-- <nav class="navbar sticky-top navbar-dark bg-dark h-100"> -->
-<nav class="navbar sticky-top navbar-dark bg-dark h-10">
-    <div class="container-fluid">
-        <a class="navbar-brand mx-auto">Skill Tracker Admin Search</a>
-        <button type="button" class="btn btn-light" routerLink="/login">Logout</button>
-    </div>
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" style="padding-left: 10px;">Skill Tracker Admin Search</a>
+    <button type="button" class="btn btn-light" routerLink="/login">Logout</button>
 </nav>
 
 <div class="container-fluid g-0">
     <main class="black-borde">
-        <div class="toolbar">
+        <div class="toolbarr">
             <div class="search-associates row" style="margin: 10px;">
-                <label style="width: 30%; text-align: left; font-size: x-large;" for="searchWithName">NAME</label>
+                <mat-label style="width: 30%; text-align: left; font-size: x-large;" for="searchWithName">NAME</mat-label>
                 <input style="width: 70%;" id="searchWithName" type="search" class="form-control" placeholder="Search with Associate Name" [(ngModel)]="searchNameText">
             </div>
             <div class="search-associates row" style="margin: 10px;">
-                <label style="width: 30%; text-align: left; font-size: x-large;" for="searchWithAssociateID">Associate ID</label>
+                <mat-label style="width: 30%; text-align: left; font-size: x-large;" for="searchWithAssociateID">Associate ID</mat-label>
                 <input style="width: 70%;" id="searchWithAssociateID" type="search" class="form-control" placeholder="Search with Associate ID" [(ngModel)]="searchAssociateIDText">
             </div>
             <div class="search-associates row" style="margin: 10px;">
-                <label style="width: 30%; text-align: left; font-size: x-large;" for="searchWithSkill">Skill</label>
-                <select style="width: 70%;" id="searchWithSkill" type="select" class="form-control" placeholder="Select Skill to Search" [(ngModel)]="searchSkillOption">
-                <option *ngFor="let values of allSkillData" [value]="values.skillname">{{values.skillname}}</option>
-                </select>
+                <mat-label style="width: 30%; text-align: left; font-size: x-large;" for="searchWithSkill">Skill</mat-label>
+                <mat-select style="width: 70%;" id="searchWithSkill" type="select" class="form-control" placeholder="Pick a Skill" [(ngModel)]="searchSkillOption">
+                    <mat-option *ngFor="let values of allSkillData" [value]="values.skillname">{{values.skillname}}</mat-option>
+                </mat-select>
             </div>
         </div>
         <div class="associates">

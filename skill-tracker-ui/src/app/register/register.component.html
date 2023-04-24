@@ -1,6 +1,6 @@
 <div id="appContainer">
     <div class="row align-items-center h-100 w-100">
-        <div class="col-md-8 col-sm-8 mx-auto">
+        <div class="col-md-7 col-sm-7 mx-auto">
             <div id="cardStyle" class="card justify-content-center">
                 <div>
                     <button class="btn btn-light" type="button" style="width:50%;" (click)="goToLogin()">Login</button>
@@ -112,9 +112,21 @@
                                         </button>
                                     </div>
                                 </div>
-                                    <div class="text-success" *ngIf="successMessage">
-                                        {{registrationForm.value.name}} is Addeed
+                                <div *ngIf="successFlag">
+                                    <div class="text-success" >
+                                        {{registrationSuccessID}}
                                     </div>
+                                    <div class="text-success" >
+                                        {{secondMsg}}
+                                    </div>
+                                    <div>
+                                        <button id="nextButton" type="button" (click)="nextButtonAction()" class="btn btn-primary">
+                                            Next
+                                        </button>
+
+                                    </div>
+                                </div>
+                                    
                                 </form>
                             </div>
                         </div>

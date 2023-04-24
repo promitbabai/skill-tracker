@@ -25,20 +25,21 @@ public class Profile implements Serializable {
 
     private String password;
 
-    private String admin;
+    private String role;
 
     private List<SkillsFromUI> techskills;
 
     private List<SkillsFromUI> nontechskills;
 
-    public Profile(String associateid, String name, String mobile, String email, String lastupdated, String password, List<SkillsFromUI> techskills, List<SkillsFromUI> nontechskills) {
+
+    public Profile(String associateid, String name, String mobile, String email, String lastupdated, String password, String role, List<SkillsFromUI> techskills, List<SkillsFromUI> nontechskills) {
         this.associateid = associateid;
         this.name = name;
         this.mobile = mobile;
         this.email = email;
         this.lastupdated = lastupdated;
         this.password = password;
-        this.admin = admin;
+        this.role = role;
         this.techskills = techskills;
         this.nontechskills = nontechskills;
     }
@@ -46,7 +47,7 @@ public class Profile implements Serializable {
     public String toString()
     {
         return "\n\n PROFILE DATA\n" + associateid + " | " + name + " | " + mobile + " | " + email + " | "
-                + lastupdated + " | " + password + " | " + admin;
+                + lastupdated + " | " + password + " | " + role;
     }
 
 }

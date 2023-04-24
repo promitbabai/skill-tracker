@@ -1,0 +1,65 @@
+
+
+CREATE TABLE `skilltracker`.`skills` (
+  `skillid` VARCHAR(5) NOT NULL,
+  `skillname` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`skillid`));
+
+
+CREATE TABLE `skilltracker`.`associate` (
+  `id` VARCHAR(50) NOT NULL,
+  `associateid` VARCHAR(30) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `mobile` VARCHAR(10) NOT NULL,
+  `lastupdated` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`));
+
+
+ALTER TABLE `skilltracker`.`associate` 
+ADD COLUMN `password` VARCHAR(45) NOT NULL AFTER `lastupdated`;
+
+ALTER TABLE `skilltracker`.`associate` 
+ADD COLUMN `admin` VARCHAR(5) NOT NULL AFTER `password`;
+
+CREATE TABLE `skilltracker`.`mapping` (
+  `id` VARCHAR(5) NOT NULL AUTO_INCREMENT,
+  `associateid` VARCHAR(45) NOT NULL,
+  `skillid` VARCHAR(45) NOT NULL,
+  `rating` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`));
+  
+  
+
+INSERT INTO `skilltracker`.`associate` (`associateid`, `name`, `email`, `mobile`) 
+VALUES ('312567', 'Tathagatha Mukherjee', 'tathagatha.mukjerjee@cognizant.com', '1234566790');
+
+
+INSERT INTO `skilltracker`.`skills` (`associateid`, `java8`, `angular`, `react`, `springboot`, `microservices`, `restfull`, `hibernate`, `git`, `docker`, `jenkins`, `aws`, `htmljavascript`, `spoken`, `communication`, `aptitude`) 
+VALUES ('172
+
+
+
+INSERT INTO `skilltracker`.`associate` (`associateid`, `name`, `email`, `mobile`) 
+VALUES ('312567', 'Tathagatha Mukherjee', 'tathagatha.mukjerjee@cognizant.com', '1234566790');
+
+
+INSERT INTO `skilltracker`.`skills` (`associateid`, `java8`, `angular`, `react`, `springboot`, `microservices`, `restfull`, `hibernate`, `git`, `docker`, `jenkins`, `aws`, `htmljavascript`, `spoken`, `communication`, `aptitude`) 
+VALUES ('172890', '12', '12', '11', '13', '15', '14', '14', '17', '13', '15', '13', '16', '16', '12', '14');
+
+
+
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T001', 'html-css-javascript');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T002', 'angular');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T003', 'react');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T004', 'spring');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T005', 'restful');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T006', 'hibernate');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T007', 'git');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T008', 'docker');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T009', 'jenkins');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('T010', 'aws');
+
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('N001', 'spoken');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('N002', 'communication');
+INSERT INTO `skilltracker`.`skills` (`skillid`, `skillname`) VALUES ('N003', 'aptitude');

@@ -46,7 +46,6 @@ public class AssociateService {
     Map<String, String> allSkillsMap = new HashMap<String, String>();
 
 
-
     public List<Associate> getAllAssociates (){
         List<Associate> associateList =  associateRepo.findAll();
         return associateList;
@@ -74,8 +73,8 @@ public class AssociateService {
      * @param profile - The Associate Profile sent from UI
      * @return Response - The Response object holding some date and messgae to be displayed in the UI
      */
-    public Profile validateUserCredentials (final String associateId, final String associatePassword){
-        Associate associate =  associateRepo.findByAssociateid(associateId);
+    public Profile getUserDetails (final String associateId, final String associatePassword){
+        Associate associate =  associateRepo.findByUsername(associateId);
         if(associate != null && associatePassword.equals(associate.getPassword())){
             System.out.println("Matched");
 
@@ -95,12 +94,12 @@ public class AssociateService {
 
     private Profile populateProfileFromAssociateAndMapping(final Associate associate, final List<Mapping> mappingsList){
         Profile profile = new Profile();
-        profile.setAssociateid(associate.getAssociateid());
+        profile.setAssociateid(associate.getUsername());
         profile.setName(associate.getName());
         profile.setEmail(associate.getEmail());
         profile.setMobile(associate.getMobile());
         profile.setLastupdated(associate.getLastupdated());
-        profile.setAdmin(associate.getAdmin());
+        profile.setRole(associate.getRole());
 
         List<SkillsFromUI> techskills = new ArrayList<SkillsFromUI>();
         List<SkillsFromUI> nonTechskills = new ArrayList<SkillsFromUI>();
@@ -132,7 +131,7 @@ public class AssociateService {
 
     public Associate getAssociateByID (final String associateId){
         System.out.println("Trying to check if the associate exists in database by calling getAssociateByID");
-        Associate associate =  associateRepo.findByAssociateid(associateId);
+        Associate associate =  associateRepo.findByUsername(associateId);
         return associate;
     }
 
@@ -171,16 +170,16 @@ public class AssociateService {
                 mappingRepo.save(populateEntityMapping(profile.getAssociateid(), skills, skillsListFromDB));
             }
 
-            String responseMsgFroUI = "Associate Data with ID = " + associate.getId() + ", saved successfully!!";
-            System.out.println(responseMsgFroUI);
-            response.setMessage(responseMsgFroUI);
-            response.setStatus(200);
-            log.info(responseMsgFroUI);
 
-            //STEP 4 - check if all records successfully inserted into DB, then send message to KAFKA
-            //log.info("Sending Profile Object to kafka server");
-            //System.out.println("Sending Profile Object to kafka server");
-            //sendKafkaMessage("INSERT", profile);
+//            STEP 4 - check if all records successfully inserted into DB, then send message to KAFKA
+            log.info("Sending Profile Object to kafka server");
+            System.out.println("Sending Profile Object to kafka server");
+            sendKafkaMessage("INSERT", profile);
+
+            //String responseMsgFroUI = "Associate Data with ID = " + associate.getId() + ", saved successfully!!";
+            response.setMessage(associate.getId());
+            response.setStatus(201);
+            log.info("Associate Data with ID = " + associate.getId() + ", saved successfully!!");
 
 
         }else{
@@ -224,19 +223,6 @@ public class AssociateService {
 
             List<Mapping> mapingsList = getAllSkillsByAssociateId(profile.getAssociateid());
 
-//            for(Mapping mapping : mapingsList){
-//                String skillIDFromDB = mapping.getSkillid();
-//                String ratingFromDB = mapping.getRating();
-//                for(SkillsFromUI skillsfromUIObj :profile.getTechskills()){
-//
-//                    skillsfromUIObj.getTopic()
-//
-//                }
-//                if(mapping.getSkillid())
-//            }
-
-
-
             for(SkillsFromUI skillRowFromUITechList : profile.getTechskills()){
                 mappingRepo.save(populateExistingMappingObjectFromUI(skillRowFromUITechList.getId(), profile.getAssociateid(), skillRowFromUITechList.getSkillId(), skillRowFromUITechList.getRating()));
 //                mappingRepo.save(populateEntityMapping(profile.getAssociateid(), skillRowFromUITechList, skillsListFromDB));
@@ -250,9 +236,9 @@ public class AssociateService {
 
 
             //STEP 4 - check if all records successfully inserted into DB, then send message to KAFKA
-            //log.info("LOG ENTRY - Sending Profile Object to kafka server");
-            //System.out.println("Sending Profile Object to kafka server");
-            //sendKafkaMessage("INSERT", profile);
+            log.info("LOG ENTRY - Sending Profile Object to kafka server");
+            System.out.println("Sending Profile Object to kafka server");
+            sendKafkaMessage("UPDATE", profile);
         response.setStatus(201);
         response.setMessage("Profile updated in the Database");
         return response;
@@ -369,13 +355,13 @@ public class AssociateService {
         Associate associate = new Associate();
         UUID uuid=UUID.randomUUID();
         associate.setId(uuid.toString());
-        associate.setAssociateid(profile.getAssociateid());
+        associate.setUsername(profile.getAssociateid());
         associate.setName(profile.getName());
         associate.setMobile(profile.getMobile());
         associate.setEmail(profile.getEmail());
         associate.setLastupdated((new java.util.Date()).toString());
         associate.setPassword(profile.getPassword());
-        associate.setAdmin("N");
+        associate.setRole("USER");
         System.out.println("\n\n\n\n\n ######################################");
         System.out.println("LastupdatedTimeinDB" + associate.getLastupdated());
         return associate;
@@ -415,54 +401,5 @@ public class AssociateService {
         return mapping;
     }
 
-
-//    public Response updateProfileOld ( Associate associate){
-//        Response response = new Response();
-//        Associate associateFromDB = null;
-//        // check if the Profile is already present in the DB or not
-//
-//        associateFromDB = getAssociateByID(associate.getAssociateid());
-//
-//        if(associateFromDB==null){
-//            response.setStatus(409);
-//            response.setMessage("Profile not present in DB");
-//        }else{
-//            //set simple daya nd date into the LastUpdated Filed
-//            associate.setLastupdated((new java.util.Date()).toString());
-//            System.out.println(associate.toString());
-//            Associate savedAssociate = null;
-//            savedAssociate = associateRepo.save(associate);
-//
-//            if (savedAssociate != null) {
-//                response.setMessage("Profile Updated successfully !!");
-//                response.setStatus(200);
-//            } else {
-//                response.setStatus(409);
-//                response.setMessage("Profile updation failed !!");
-//            }
-//        }
-//
-//        return response;
-//    }
-
-
-
-//    public Associate getAssociateById(final String associateid){
-//
-//        Associate data = null;
-//        data = repo.findByAssociateid(associateid);
-//        return data;
-//    }
-
-
-
-
-//    public Associate getAssociateByID (final String associateid){
-//        //System.out.println("AssociateRepository - getAllAssociates - Before calling Repo findAll");
-//        Associate associate =  repo.findByAssociateid(associateid);
-//        //System.out.println("AssociateRepository - getAllAssociates - After calling Repo findAll");
-//
-//        return associate;
-//    }
 
 }
